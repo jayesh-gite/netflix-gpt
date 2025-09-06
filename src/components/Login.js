@@ -20,7 +20,7 @@ const Login = () => {
         ></img>
       </div>
       <form
-        className="w-3/12 absolute p-12 bg-black my-36 mx-auto right-0
+        className="w-4/12 absolute p-12 bg-black my-36 mx-auto right-0
       left-0 text-white rounded-lg bg-opacity-80"
       >
         <h1>{isSignInForm ? "Sign-In" : "Sign-Up"}</h1>
@@ -39,13 +39,16 @@ const Login = () => {
         <input
           type="text"
           placeholder="Password"
-          className="p-4 my-4 w-full bg-gray-700"
+          className="p-4 my- w-full bg-gray-700"
         />
-        <button>
+        <button className="p-4 my-4 w-full bg-red-700 rounded-lg">
+          {isSignInForm ? "Sign-In" : "Sign-Up"}
+        </button>
+        <p className="py-4 cursor-pointer" onClick={toggleSingForm}>
           {isSignInForm
             ? "New to Netflix? Signup"
             : "Already Regisered?Singin Now"}
-        </button>
+        </p>
       </form>
     </div>
   );
