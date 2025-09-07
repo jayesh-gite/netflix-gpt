@@ -8,6 +8,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../utils/firebase.js";
 import { useNavigate } from "react-router-dom";
+import { addUser } from "../utils/userSlice.js";
 
 const Login = () => {
   const [isSignInForm, setSignInForm] = useState(true);
@@ -42,7 +43,15 @@ const Login = () => {
           });
         })
         .then(() => {
-          navigate("/browse");
+          const { uid, email, displayName, photoURL } = auth.currentUser;
+          dispatchEvent(
+            addUser({
+              uid,
+              email,
+              displayName,
+              photoURL,
+            })
+          );
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -60,10 +69,6 @@ const Login = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          navigate("/browse");
-
-          console.log("Logged in");
-          console.log(user);
           // ...
         })
         .catch((error) => {
