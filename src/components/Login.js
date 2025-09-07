@@ -1,11 +1,77 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Header from "./Header.js";
+import { checkValidData } from "../utils/validate.js";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
+import { auth } from "../utils/firebase.js";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [isSignInForm, setSignInForm] = useState(true);
+  const [errMessage, setErrorMessage] = useState(null);
+  const name = useRef(null);
+  const email = useRef(null);
+  const password = useRef(null);
+  const navigate = useNavigate();
 
   const toggleSingForm = () => {
     setSignInForm(!isSignInForm);
+  };
+  const handleButtonClick = (e) => {
+    e.preventDefault();
+    const message = checkValidData(email.current.value, password.current.value);
+    setErrorMessage(message);
+    if (message) return;
+
+    //Sign-up
+    if (!isSignInForm) {
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          updateProfile(user, {
+            displayName: name.current.value,
+            photoURL: "https://avatars.githubusercontent.com/u/66199033",
+          });
+        })
+        .then(() => {
+          navigate("/browse");
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+          // ..
+        });
+    } else {
+      //Sign In Logic
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          navigate("/browse");
+
+          console.log("Logged in");
+          console.log(user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          setErrorMessage(errorCode + "-" + errorMessage);
+        });
+    }
   };
   return (
     <div>
@@ -27,21 +93,28 @@ const Login = () => {
         {!isSignInForm && (
           <input
             type="text"
+            ref={name}
             placeholder="Full Name"
             className="p-4 my-4 w-full bg-gray-700"
           />
         )}
         <input
+          ref={email}
           type="text"
           placeholder="Email Address"
           className="p-4 my-4 w-full bg-gray-700"
         />
         <input
+          ref={password}
           type="text"
           placeholder="Password"
           className="p-4 my- w-full bg-gray-700"
         />
-        <button className="p-4 my-4 w-full bg-red-700 rounded-lg">
+        <p className="text-red-500 font-bold text-lg">{errMessage}</p>
+        <button
+          className="p-4 my-4 w-full bg-red-700 rounded-lg"
+          onClick={(e) => handleButtonClick(e)}
+        >
           {isSignInForm ? "Sign-In" : "Sign-Up"}
         </button>
         <p className="py-4 cursor-pointer" onClick={toggleSingForm}>
