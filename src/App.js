@@ -4,6 +4,9 @@ import appStore from "./utils/appStore";
 import { Provider } from "react-redux";
 
 function App() {
+  console.log("STORE _");
+  console.log(appStore);
+
   return (
     <Provider store={appStore}>
       <Body />
