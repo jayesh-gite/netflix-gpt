@@ -5,9 +5,11 @@ import { useEffect } from "react";
 import useNowPlayingMovies from "../hooks/useNowPlyaingMovies.js";
 import MainContainer from "./MainContainer.js";
 import SecondaryContainer from "./SeondaryContainer.js";
+import usePopularMovies from "../hooks/usePopularMovies.js";
 
 const Browse = () => {
   useNowPlayingMovies();
+  usePopularMovies();
   return (
     <div>
       <Header />
